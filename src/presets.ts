@@ -7,7 +7,7 @@ import type { ModeOpts } from './engine/profiles';
 import { BASE_PROFILES, scaleCounts, scaleRadii } from './engine/profiles';
 import type { OrbSize, OrbState } from './types';
 
-export type ModeKey = 'orbits' | 'globe' | 'rubik' | 'wave' | 'ribbon' | 'morph';
+export type ModeKey = 'orbits' | 'globe' | 'rubik' | 'wave' | 'ribbon' | 'morph' | 'idle';
 
 export const STATE_TO_MODE: Record<OrbState, ModeKey> = {
   working: 'orbits',
@@ -15,7 +15,8 @@ export const STATE_TO_MODE: Record<OrbState, ModeKey> = {
   solving: 'rubik',
   listening: 'wave',
   composing: 'ribbon',
-  shaping: 'morph'
+  shaping: 'morph',
+  idle: 'idle'
 };
 
 interface Preset {
@@ -50,6 +51,12 @@ const PRESETS: Record<ModeKey, Record<OrbSize, Preset>> = {
   morph: {
     64: { speed: 2.405, count: 0.54, size: 0.395, extra: { spread: 1.45 } },
     20: { speed: 2.08, count: 0.53, size: 1.011, extra: { spread: 1.45 } }
+  },
+  // idle runs on its own slow clock: the base rates already read as "at
+  // rest", so `speed` only trims them
+  idle: {
+    64: { speed: 1, count: 0.85, size: 1.15 },
+    20: { speed: 1.55, count: 0.22, size: 1.9, extra: { drift: 0.03, breath: 0.026 } }
   }
 };
 

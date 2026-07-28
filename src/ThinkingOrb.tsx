@@ -17,6 +17,8 @@ import { useReducedMotion, useResolvedDark } from './theme';
 import type { OrbState, ThinkingOrbProps } from './types';
 
 const LABELS: Record<string, string> = {
+  // no ellipsis: nothing is in progress
+  idle: 'Idle',
   working: 'Working…',
   searching: 'Searching…',
   solving: 'Solving…',

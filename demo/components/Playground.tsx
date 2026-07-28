@@ -6,7 +6,7 @@ import { CopyButton } from './CopyButton';
 import { PlayPauseToggle } from './PlayPauseToggle';
 import { Slider } from './Slider';
 
-const STATES: OrbState[] = ['working', 'searching', 'solving', 'listening', 'composing', 'shaping'];
+const STATES: OrbState[] = ['idle', 'working', 'searching', 'solving', 'listening', 'composing', 'shaping'];
 const SIZES: OrbSize[] = [64, 20];
 
 const SPEED_MIN = 25;

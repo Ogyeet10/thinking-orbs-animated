@@ -9,6 +9,7 @@ const chipClass =
 
 /** A scripted agent run — the states an assistant walks through. */
 const SCRIPT: Array<{ state: OrbState; label: string }> = [
+  { state: 'idle', label: 'Idle' },
   { state: 'listening', label: 'Listening…' },
   { state: 'searching', label: 'Searching…' },
   { state: 'working', label: 'Working…' },

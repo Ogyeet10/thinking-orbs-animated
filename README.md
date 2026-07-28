@@ -1,6 +1,6 @@
 # thinking-orbs
 
-Dotted thought-orb loading indicators for AI & agent UIs. Six hand-tuned animated states, each shipped at two purpose-tuned sizes, rendered on a plain 2D canvas — no WebGL, no filters, works identically in Chrome, Safari and Firefox.
+Dotted thought-orb loading indicators for AI & agent UIs. Seven hand-tuned animated states — one at rest, six at work — each shipped at two purpose-tuned sizes, rendered on a plain 2D canvas — no WebGL, no filters, works identically in Chrome, Safari and Firefox.
 
 [Live demo](https://orbs.jakubantalik.com) · [Repository](https://github.com/Jakubantalik/thinking-orbs) · [Report an issue](https://github.com/Jakubantalik/thinking-orbs/issues)
 
@@ -22,9 +22,10 @@ function Status() {
 
 ## States
 
-Six verbs an agent can be doing, each a distinct animation:
+One resting state and six verbs an agent can be doing, each a distinct animation:
 
 ```tsx
+<ThinkingOrb state="idle" />       {/* at rest: a slow turn, dots drifting in place */}
 <ThinkingOrb state="working" />    {/* particles on tilted orbits */}
 <ThinkingOrb state="searching" />  {/* a scan meridian sweeps a dotted globe */}
 <ThinkingOrb state="solving" />    {/* bands scramble, then click back solved */}
@@ -35,7 +36,7 @@ Six verbs an agent can be doing, each a distinct animation:
 
 ## Transitions
 
-Changing `state` morphs; it never cuts. Both animations keep running while every dot of the outgoing frame travels to a dot of the incoming one, so an agent moving from `listening` to `searching` reads as one continuous object changing its mind:
+Changing `state` morphs; it never cuts. Both animations keep running while every dot of the outgoing frame travels to a dot of the incoming one, so an agent going `idle` → `listening` → `searching` → `idle` reads as one continuous object changing its mind:
 
 ```tsx
 <ThinkingOrb state={agent.state} />              {/* 620 ms morph (default) */}

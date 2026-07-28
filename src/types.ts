@@ -1,7 +1,8 @@
 import type { CSSProperties, CanvasHTMLAttributes } from 'react';
 
 /**
- * The six shipped states — each a hand-tuned animation:
+ * The seven shipped states — each a hand-tuned animation:
+ * - `idle`      — the orb at rest: a slow turn, dots drifting in place
  * - `working`   — particles on tilted orbits
  * - `searching` — a scan meridian sweeps a dotted globe
  * - `solving`   — bands scramble in quarter turns, then click back
@@ -9,7 +10,14 @@ import type { CSSProperties, CanvasHTMLAttributes } from 'react';
  * - `composing` — an undulating multi-band sash
  * - `shaping`   — a dotted outline morphs circle → triangle → square
  */
-export type OrbState = 'working' | 'searching' | 'solving' | 'listening' | 'composing' | 'shaping';
+export type OrbState =
+  | 'idle'
+  | 'working'
+  | 'searching'
+  | 'solving'
+  | 'listening'
+  | 'composing'
+  | 'shaping';
 
 /**
  * Rendered size in CSS pixels. Exactly two tuned presets ship:

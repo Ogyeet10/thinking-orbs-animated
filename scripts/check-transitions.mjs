@@ -10,7 +10,7 @@
 
 import { MODE_DRAWS, blendDots, captureDots, resolvePreset } from '../dist/index.es.js';
 
-const STATES = ['working', 'searching', 'solving', 'listening', 'composing', 'shaping'];
+const STATES = ['idle', 'working', 'searching', 'solving', 'listening', 'composing', 'shaping'];
 const SIZE = 64;
 const FPS = 60;
 const DUR = 0.62;

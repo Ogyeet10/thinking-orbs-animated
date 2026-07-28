@@ -14,7 +14,7 @@ const COUNT_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ['rings', 'lonDensity'],
   ['lanes', 'segs']
 ];
-const COUNT_KEYS = ['orbitN', 'ghostN'] as const;
+const COUNT_KEYS = ['orbitN', 'ghostN', 'dotN'] as const;
 const ICON_DENSITY_KEYS = ['iconD'] as const;
 
 // Every key that sets a dot's rendered radius — scaling all of them keeps
@@ -115,5 +115,20 @@ export const BASE_PROFILES: Record<string, ModeOpts> = {
     rDot: 0.021,
     iconD: 1,
     rMin: 0.25
+  },
+  idle: {
+    dotN: 170,
+    spin: 0.34,
+    breath: 0.018,
+    drift: 0.022,
+    breathRate: 0.53,
+    driftRate: 0.31,
+    aFar: 0.72,
+    rBase: 0.7,
+    rDepth: 2.0,
+    inkFar: 0.62,
+    inkSpan: 0.54,
+    rsPow: 0.6,
+    rMin: 0.3
   }
 };

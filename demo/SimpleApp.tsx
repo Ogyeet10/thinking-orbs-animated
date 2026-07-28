@@ -3,6 +3,7 @@ import type { OrbState } from 'thinking-orbs';
 import { ThinkingOrb } from 'thinking-orbs';
 
 const STATES: Array<{ state: OrbState; blurb: string }> = [
+  { state: 'idle', blurb: 'at rest: a slow turn, dots drifting in place' },
   { state: 'working', blurb: 'particles on tilted orbits' },
   { state: 'searching', blurb: 'a scan meridian sweeps the field' },
   { state: 'solving', blurb: 'bands scramble, then click back' },
