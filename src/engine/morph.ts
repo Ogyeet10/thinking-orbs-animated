@@ -70,7 +70,10 @@ const SEG = HOLD + MORPH;
 
 export const drawMorph: ModeDraw = (ctx, size, t, dark, o) => {
   const K = CYCLE.length;
-  const tc = t % (SEG * K);
+  const span = SEG * K;
+  // positive modulo — the clock is monotonic in practice, but a negative
+  // t must not index off the front of the cycle
+  const tc = ((t % span) + span) % span;
   const k = Math.floor(tc / SEG);
   const local = tc - k * SEG;
   const m = local > HOLD ? smoothE((local - HOLD) / MORPH) : 0;

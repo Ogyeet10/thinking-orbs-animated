@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { OrbSize, OrbState } from '../../src';
 import { ThinkingOrb } from '../../src';
 import { cn } from '../lib/utils';
 import { CopyButton } from './CopyButton';
 import { PlayPauseToggle } from './PlayPauseToggle';
+import { Slider } from './Slider';
 
 const STATES: OrbState[] = ['working', 'searching', 'solving', 'listening', 'composing', 'shaping'];
 const SIZES: OrbSize[] = [64, 20];
@@ -11,9 +12,16 @@ const SIZES: OrbSize[] = [64, 20];
 const SPEED_MIN = 25;
 const SPEED_MAX = 300;
 
-function buildSnippet(state: OrbState, size: OrbSize, speed: number) {
+const TRANSITION_DEFAULT = 620;
+const TRANSITION_MAX = 1600;
+
+/** How long each state is held while auto-cycling. */
+const CYCLE_MS = 2200;
+
+function buildSnippet(state: OrbState, size: OrbSize, speed: number, transition: number) {
   const props = [`state="${state}"`, `size={${size}}`];
   if (speed !== 100) props.push(`speed={${(speed / 100).toFixed(2)}}`);
+  if (transition !== TRANSITION_DEFAULT) props.push(`transition={${transition}}`);
   return `import { ThinkingOrb } from 'thinking-orbs';\n\n<ThinkingOrb ${props.join(' ')} />`;
 }
 
@@ -48,9 +56,20 @@ export function Playground({
   // below only flips this local state, so the surrounding Examples keep
   // auto-playing regardless.
   const [paused, setPaused] = useState(true);
+  const [transition, setTransition] = useState(TRANSITION_DEFAULT);
+  const [cycling, setCycling] = useState(false);
 
-  const snippet = buildSnippet(state, size, speed);
-  const fillPct = ((speed - SPEED_MIN) / (SPEED_MAX - SPEED_MIN)) * 100;
+  // Auto-cycle walks the states on a timer — the fastest way to see that a
+  // switch is a morph, not a cut. Every hop interrupts the last one cleanly.
+  useEffect(() => {
+    if (!cycling) return;
+    const id = setInterval(() => {
+      setState((s) => STATES[(STATES.indexOf(s) + 1) % STATES.length]);
+    }, CYCLE_MS);
+    return () => clearInterval(id);
+  }, [cycling]);
+
+  const snippet = buildSnippet(state, size, speed, transition);
 
   return (
     <section className="w-full flex flex-col gap-1.5 mb-12" aria-label="Interactive playground">
@@ -66,6 +85,14 @@ export function Playground({
                   {s.charAt(0).toUpperCase() + s.slice(1)}
                 </TabBtn>
               ))}
+              <TabBtn
+                active={cycling}
+                onClick={() => setCycling((c) => !c)}
+                aria-pressed={cycling}
+                title="Step through every state on a timer"
+              >
+                {cycling ? 'Stop cycle' : 'Auto-cycle'}
+              </TabBtn>
             </div>
           </div>
         </div>
@@ -82,28 +109,30 @@ export function Playground({
             </div>
           </div>
 
-          <div className="flex flex-col gap-[9px] min-w-[100px] w-[140px] max-sm:w-full">
-            <span className="text-xs font-normal leading-[14px] text-(--text-muted)">Speed</span>
-            <div className="strength-track relative w-full h-9 rounded-lg bg-(--strength-bg) shadow-(--strength-shadow) overflow-hidden cursor-grab active:cursor-grabbing hover:bg-(--strength-hover)">
-              <div className="absolute top-0 left-0 bottom-0 rounded-lg bg-(--strength-fill-bg) shadow-(--strength-shadow) transition-[width] duration-[80ms] ease-out pointer-events-none" style={{ width: `${fillPct}%` }} />
-              <span className="absolute top-0 left-[11px] h-full flex items-center text-[11px] font-normal leading-[14px] text-(--text-muted) whitespace-nowrap pointer-events-none z-[1]">{(speed / 100).toFixed(2)}×</span>
-              <input
-                className="strength-input appearance-none absolute inset-0 w-full h-full m-0 p-0 bg-transparent cursor-grab opacity-0 z-[2] active:cursor-grabbing"
-                type="range"
-                min={SPEED_MIN}
-                max={SPEED_MAX}
-                step={5}
-                value={speed}
-                onChange={(e) => onSpeedChange(Number(e.target.value))}
-                aria-label="Animation speed"
-              />
-            </div>
-          </div>
+          <Slider
+            label="Speed"
+            value={speed}
+            min={SPEED_MIN}
+            max={SPEED_MAX}
+            step={5}
+            format={(v) => `${(v / 100).toFixed(2)}×`}
+            onChange={onSpeedChange}
+          />
+
+          <Slider
+            label="Transition"
+            value={transition}
+            min={0}
+            max={TRANSITION_MAX}
+            step={20}
+            format={(v) => (v === 0 ? 'instant' : `${v} ms`)}
+            onChange={setTransition}
+          />
         </div>
       </div>
 
       <div className="relative w-full min-h-[304px] rounded-[10px] bg-(--surface) flex flex-col items-center justify-center p-12 gap-6 max-sm:p-6">
-        <ThinkingOrb key={`${state}-${size}`} state={state} size={size} speed={speed / 100} paused={paused} />
+        <ThinkingOrb state={state} size={size} speed={speed / 100} paused={paused} transition={transition} />
         <PlayPauseToggle playing={!paused} onToggle={() => setPaused((p) => !p)} className="max-sm:absolute max-sm:bottom-6 max-sm:left-1/2 max-sm:-translate-x-1/2" />
       </div>
 

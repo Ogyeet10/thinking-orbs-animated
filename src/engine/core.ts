@@ -52,17 +52,56 @@ export function makeProj(yaw: number, tilt: number, cx: number, cy: number, scal
 }
 
 /**
+ * Active capture sink. When set, `paint` collects dots instead of filling
+ * them — that's how a frame is turned into data the blender can morph.
+ * Single-threaded rAF work, so a module-level slot is safe (and keeps the
+ * `ModeDraw` contract unchanged for every existing mode).
+ */
+let sink: Dot[] | null = null;
+
+/**
+ * Run a frame painter with drawing intercepted: returns the dots it would
+ * have filled, with `rMin` already folded into each radius so the captured
+ * list is self-contained.
+ */
+export function captureDots(run: () => void): Dot[] {
+  const outer = sink;
+  const out: Dot[] = [];
+  sink = out;
+  try {
+    run();
+  } finally {
+    sink = outer;
+  }
+  return out;
+}
+
+/**
  * Painter: z-sort far→near, matte grayscale dots. On dark substrates the
  * ink value is mirrored (1 - white) so near dots read bright — the same
  * depth language on an inverted substrate.
  */
 export function paint(ctx: CanvasRenderingContext2D, dots: Dot[], dark: boolean, rMin = 0.3): void {
+  if (sink) {
+    for (const d of dots) sink.push({ ...d, r: Math.max(rMin, d.r) });
+    return;
+  }
+  paintDots(ctx, dots, dark ? 1 : 0, rMin);
+}
+
+/**
+ * The raw painter behind `paint`, with `darkness` as a continuous 0..1
+ * mix instead of a boolean: 0 = dark ink on light, 1 = mirrored. Values
+ * in between let a theme flip cross-fade rather than snap.
+ */
+export function paintDots(ctx: CanvasRenderingContext2D, dots: Dot[], darkness: number, rMin = 0): void {
   dots.sort((a, b) => a.z - b.z);
   for (const d of dots) {
     const alpha = d.a ?? 1;
     if (alpha < 0.02) continue;
     const w = Math.min(1, Math.max(0, d.white));
-    const g = Math.round((dark ? 1 - w : w) * 255);
+    // w at darkness 0, (1 - w) at darkness 1, linear across
+    const g = Math.round((w + (1 - 2 * w) * darkness) * 255);
     ctx.fillStyle = `rgba(${g},${g},${g},${alpha})`;
     ctx.beginPath();
     ctx.arc(d.x, d.y, Math.max(rMin, d.r), 0, Math.PI * 2);

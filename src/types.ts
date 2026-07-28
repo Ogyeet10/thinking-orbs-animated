@@ -57,5 +57,16 @@ export interface ThinkingOrbProps extends Omit<CanvasHTMLAttributes<HTMLCanvasEl
   /** Freeze the animation on the current frame. @default false */
   paused?: boolean;
 
+  /**
+   * Duration in ms of the dot-by-dot morph played when `state` changes.
+   * Both animations keep running through it — the outgoing dots travel
+   * to the incoming ones rather than cross-fading. Interrupting a morph
+   * picks up from exactly what is on screen. `0` swaps instantly.
+   *
+   * Ignored under `prefers-reduced-motion: reduce`.
+   * @default 620
+   */
+  transition?: number;
+
   style?: CSSProperties;
 }

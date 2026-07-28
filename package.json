@@ -28,6 +28,7 @@
     "build": "vite build",
     "build:demo": "vite build --config vite.config.demo.ts",
     "typecheck": "tsc --noEmit",
+    "check:transitions": "npm run build && node scripts/check-transitions.mjs",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {

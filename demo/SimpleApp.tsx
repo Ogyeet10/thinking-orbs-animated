@@ -13,12 +13,21 @@ const STATES: Array<{ state: OrbState; blurb: string }> = [
 
 export function App() {
   const [dark, setDark] = useState(true);
+  // walks the states so the dot-by-dot morph between them is visible
+  const [step, setStep] = useState(0);
 
   // drive the ancestor `data-theme` attribute — the same signal the
   // library's auto detection reads in a host project
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   }, [dark]);
+
+  useEffect(() => {
+    const id = setInterval(() => setStep((s) => (s + 1) % STATES.length), 2600);
+    return () => clearInterval(id);
+  }, []);
+
+  const live = STATES[step];
 
   return (
     <div className="page">
@@ -28,6 +37,19 @@ export function App() {
           {dark ? 'LIGHT' : 'DARK'}
         </button>
       </header>
+
+      <section className="grid">
+        <div className="card">
+          <div className="pair">
+            <ThinkingOrb state={live.state} size={64} />
+            <ThinkingOrb state={live.state} size={20} />
+          </div>
+          <div className="text">
+            <span className="title">{live.state}</span>
+            <span className="sub">auto-cycling — every change is a morph, not a cut</span>
+          </div>
+        </div>
+      </section>
 
       <section className="grid">
         {STATES.map(({ state, blurb }) => (

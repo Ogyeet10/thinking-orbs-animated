@@ -33,6 +33,26 @@ Six verbs an agent can be doing, each a distinct animation:
 <ThinkingOrb state="shaping" />    {/* dotted outline: circle → triangle → square */}
 ```
 
+## Transitions
+
+Changing `state` morphs; it never cuts. Both animations keep running while every dot of the outgoing frame travels to a dot of the incoming one, so an agent moving from `listening` to `searching` reads as one continuous object changing its mind:
+
+```tsx
+<ThinkingOrb state={agent.state} />              {/* 620 ms morph (default) */}
+<ThinkingOrb state={agent.state} transition={900} />  {/* slower, dreamier */}
+<ThinkingOrb state={agent.state} transition={0} />    {/* opt out: hard swap */}
+```
+
+How it works: the two frames are captured as dot lists, ordered by angle around the centre and paired, then each dot travels in polar space — curving around the centre rather than through it — with a slight per-dot stagger so the change sweeps around the orb. Where the two states have different dot counts, the extra dots bud out of their parent from zero radius (and merging dots shrink back into it), so the first and last frames of a morph are pixel-identical to the plain states.
+
+Everything else is continuous too:
+
+- **Interrupting** a morph is free — a new `state` mid-flight starts from exactly what is on screen, no snap-back.
+- **`speed`** warps the clock instead of resetting it, so dragging a speed slider never jumps the phase.
+- **`paused`** freezes the clock and resuming picks up where it stopped. State morphs still play while paused.
+- **Theme flips** fade the ink polarity rather than inverting on one frame.
+- `prefers-reduced-motion: reduce` skips all of it: states swap instantly on a static frame.
+
 ## Sizes
 
 Two tuned presets — separate designs, not a scale factor. `64` for chat-avatar scale, `20` for inline-text scale. Each carries its own dot count, dot size and speed tuning:
@@ -66,6 +86,7 @@ Strictly monochrome — light ink for dark backgrounds, dark ink for light backg
   size={20}
   speed={1.5}          // multiplier on the preset's baked speed
   paused={false}       // freeze on the current frame
+  transition={620}     // ms of the state-change morph; 0 swaps instantly
   aria-label="Analysing repository…"  // overrides the per-state default
 />
 ```
@@ -75,9 +96,10 @@ All other `<canvas>` props (`className`, `style`, `data-*`, …) pass through.
 ## Accessibility & performance
 
 - `role="img"` with a sensible per-state `aria-label` out of the box.
-- `prefers-reduced-motion: reduce` renders a static representative frame — no animation — and still follows the live theme.
+- `prefers-reduced-motion: reduce` renders a static representative frame — no animation, no morphing — and still follows the live theme.
 - Every instance pauses automatically when scrolled offscreen (`IntersectionObserver`) or when the tab is hidden, and resumes in phase — all instances share one clock.
 - Plain 2D canvas arcs only: no `ctx.filter`, no SVG filters, no WebGL — the same pixels everywhere, cheap on low-end devices. Device-pixel-ratio capped at 2.
+- A settled orb paints exactly one mode per frame — the blending machinery only runs while a morph is in flight, and a paused, settled orb stops requesting frames entirely.
 
 ## License
 

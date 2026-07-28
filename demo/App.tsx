@@ -4,6 +4,7 @@ import { Examples } from './components/Examples';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Playground } from './components/Playground';
+import { Transitions } from './components/Transitions';
 import { useTheme } from './hooks/useTheme';
 
 const USAGE_SNIPPET = `import { ThinkingOrb } from 'thinking-orbs';\n\n<ThinkingOrb state="listening" size={64} />`;
@@ -35,6 +36,8 @@ export function App() {
       />
 
       <Examples speed={speed / 100} debug={debug} bigChips={bigChips} smallAll={smallAll} />
+
+      <Transitions />
 
       <section className="w-full mb-6" aria-label="Installation">
         <h2 className="text-base font-normal leading-[34px] text-(--section-title-color) mb-1">Installation</h2>
