@@ -1,7 +1,10 @@
 {
-  "name": "thinking-orbs",
+  "name": "@aide-gg/thinking-orbs",
   "version": "0.1.1",
-  "description": "Dotted thought-orb loading indicators for AI & agent UIs — six tuned states, two sizes, auto dark/light",
+  "description": "Dotted thought-orb loading indicators for AI & agent UIs — six tuned states, two sizes, auto dark/light. Fork of thinking-orbs by Jakub Antalik, adding an idle at-rest state and smoother transitions.",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.es.js",
@@ -63,13 +66,16 @@
     "dark-mode"
   ],
   "author": "Jakub Antalik",
+  "contributors": [
+    "Aidan Leuenberger"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jakubantalik/thinking-orbs.git"
+    "url": "git+https://github.com/Ogyeet10/thinking-orbs-animated.git"
   },
   "bugs": {
-    "url": "https://github.com/Jakubantalik/thinking-orbs/issues"
+    "url": "https://github.com/Ogyeet10/thinking-orbs-animated/issues"
   },
-  "homepage": "https://orbs.jakubantalik.com"
+  "homepage": "https://github.com/Ogyeet10/thinking-orbs-animated#readme"
 }
